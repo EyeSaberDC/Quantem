@@ -1,0 +1,32 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "VIP",
+      "price": 4.99,
+      "category": "Ranks",
+      "description": "Yeet",
+      "image": "https://static.wikia.nocookie.net/hypixelserver/images/0/0b/VIP.png"
+    },
+    {
+      "id": 2,
+      "name": "MVP",
+      "price": 9.99,
+      "category": "Ranks",
+      "description": "Ree",
+      "image": "https://static.wikia.nocookie.net/hypixelserver/images/7/75/MVP.png"
+    },
+    {
+      "id": 3,
+      "name": "MVP+",
+      "price": 14.99,
+      "category": "Ranks",
+      "description": "Freee",
+      "image": "https://static.wikia.nocookie.net/hypixelserver/images/9/99/MVP%2B.png"
+    }
+  ],
+  "categories": [
+    "Ranks",
+    "Keys"
+  ]
+}

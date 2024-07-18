@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Shop - Cart</title>
+    <link rel="stylesheet" href="styles/shop-styles.css">
+    <link rel="stylesheet" href="styles/cart-styles.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <span class="logo-text">Quantum</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="cart.html" class="active">Cart</a></li>
+            </ul>
+            <div class="cart-icon">🛒 <span id="cart-count">0</span></div>
+            <button class="menu-toggle">☰</button>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Your Cart</h1>
+        <div id="cart-items"></div>
+        <div id="cart-total"></div>
+        <div id="checkout-form">
+            <h2>Checkout</h2>
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="name">Minecraft Username</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="payment-method">Payment Method</label>
+                    <select id="payment-method" name="payment-method" required>
+                        <option value="">Select a payment method</option>
+                        <option value="stripe">Credit Card (Stripe)</option>
+                        <option value="crypto">Cryptocurrency</option>
+                    </select>
+                </div>
+                <div id="stripe-element" class="form-group" style="display: none;">
+                    <!-- Stripe Elements will be inserted here -->
+                </div>
+                <div id="crypto-address" class="form-group" style="display: none;">
+                    <p>Send payment to this address: <span id="crypto-payment-address"></span></p>
+                </div>
+                <button type="submit" class="checkout-button">Place Order</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Quantum Shop. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts/cart-script.js"></script>
+</body>
+</html>

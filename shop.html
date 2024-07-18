@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Craft - Server Shop</title>
+    <link rel="stylesheet" href="styles/shop-styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <span class="logo-text">Quantum Craft</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html" class="active">Shop</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <div class="cart-icon" id="cart-icon">🛒 <span id="cart-count">0</span></div>
+            <button class="menu-toggle">☰</button>
+        </nav>
+    </header>
+
+    <main>
+        <div class="shop-container">
+            <aside class="categories">
+                <h2>Categories</h2>
+                <ul id="category-list"></ul>
+            </aside>
+            <section class="product-grid" id="product-grid"></section>
+        </div>
+    </main>
+
+    <button id="admin-login" class="admin-login">Admin Login</button>
+
+<div id="admin-panel" class="admin-panel" style="display: none;">
+    <h2>Admin Panel</h2>
+    <button id="add-product">Add Product</button>
+    <button id="edit-categories">Add Category</button>
+    <button id="delete-category">Delete Category</button>
+    <button id="delete-product">Delete Product</button>
+</div>
+
+    <!-- Add this modal for the admin login -->
+    <div id="admin-login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Admin Login</h2>
+            <form id="admin-login-form">
+                <input type="password" id="admin-password" placeholder="Enter admin password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title"></h2>
+            <form id="product-form">
+                <input type="text" id="product-name" placeholder="Product Name" required>
+                <input type="number" id="product-price" placeholder="Price" step="0.01" required>
+                <select id="product-category" required></select>
+                <textarea id="product-description" placeholder="Description" required></textarea>
+                <input type="text" id="product-image" placeholder="Image URL" required>
+                <button type="submit">Save Product</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Quantum Craft. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts/shop-script.js"></script>
+</body>
+</html>

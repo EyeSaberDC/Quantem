@@ -1,0 +1,20 @@
+{
+    "name": "nextui-inspired-website",
+    "version": "1.0.0",
+    "description": "A NextUI-inspired website hosted on localhost:3030",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "keywords": [
+      "nextui",
+      "website",
+      "express"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "express": "^4.17.1"
+    }
+  }
+  

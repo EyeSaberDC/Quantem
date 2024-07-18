@@ -64,5 +64,15 @@
 
     <script src="scripts/env.js"></script>
     <script src="scripts/cart-script.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        function loadItems() {
+            database.ref('items').on('value', (snapshot) => {
+                const items = snapshot.val();
+                // Render your items here
+            });
+        }
+    </script>
 </body>
 </html>

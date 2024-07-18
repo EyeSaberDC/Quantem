@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const stripe = Stripe('pk_live_51OS7JKKcpepkbn5qNSfW1o32Jy9V8rAvjKJh3BSenMg6dAL9GRFhbn1Y8MGO2t0T3YWIPf7mBUdcsQnXAXEQMS7T00ezuHcF38');
+    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
     const elements = stripe.elements();
     const cardElement = elements.create('card');
 

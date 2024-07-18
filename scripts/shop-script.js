@@ -1,19 +1,6 @@
-// Firebase configuration
-const firebaseConfig = {
-    // Your web app's Firebase configuration
-    // Replace this with your actual Firebase config
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// MongoDB Atlas Data API endpoint and API key
+const DATA_API_URL = 'https://data.mongodb-api.com/app/application-0-iixawck/endpoint/data/v1/action';
+const API_KEY = '070df408-ea8e-4ce6-8564-5148dc193a06';
 
 document.addEventListener('DOMContentLoaded', () => {
     const itemsContainer = document.getElementById('items-container');
@@ -24,33 +11,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isAdmin = false;
 
-    // Load items from Firebase
-    function loadItems() {
-        database.ref('items').on('value', (snapshot) => {
-            const items = snapshot.val();
-            itemsContainer.innerHTML = '';
-            for (let id in items) {
-                const item = items[id];
-                const itemElement = createItemElement(id, item);
-                itemsContainer.appendChild(itemElement);
-            }
+    // Load items from MongoDB
+    async function loadItems() {
+        const response = await fetch(`${DATA_API_URL}/find`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': API_KEY
+            },
+            body: JSON.stringify({
+                dataSource: 'Cluster0',
+                database: 'shop',
+                collection: 'items',
+                filter: {}
+            })
+        });
+        const data = await response.json();
+        itemsContainer.innerHTML = '';
+        data.documents.forEach(item => {
+            const itemElement = createItemElement(item);
+            itemsContainer.appendChild(itemElement);
         });
     }
 
     // Create item element
-    function createItemElement(id, item) {
+    function createItemElement(item) {
         const itemElement = document.createElement('div');
         itemElement.className = 'item';
         itemElement.innerHTML = `
             <img src="${item.image}" alt="${item.name}">
             <h3>${item.name}</h3>
             <p>$${item.price.toFixed(2)}</p>
-            <button class="add-to-cart" data-id="${id}">Add to Cart</button>
+            <button class="add-to-cart" data-id="${item._id}">Add to Cart</button>
         `;
         if (isAdmin) {
             itemElement.innerHTML += `
-                <button class="edit-item" data-id="${id}">Edit</button>
-                <button class="delete-item" data-id="${id}">Delete</button>
+                <button class="edit-item" data-id="${item._id}">Edit</button>
+                <button class="delete-item" data-id="${item._id}">Delete</button>
             `;
         }
         return itemElement;
@@ -59,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add item to cart
     function addToCart(item) {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const existingItem = cart.find(i => i.id === item.id);
+        const existingItem = cart.find(i => i._id === item._id);
         if (existingItem) {
             existingItem.quantity += 1;
         } else {
@@ -77,18 +74,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Add new item
-    function addItem(item) {
-        return database.ref('items').push(item);
+    async function addItem(item) {
+        const response = await fetch(`${DATA_API_URL}/insertOne`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': API_KEY
+            },
+            body: JSON.stringify({
+                dataSource: 'Cluster0',
+                database: 'shop',
+                collection: 'items',
+                document: item
+            })
+        });
+        const data = await response.json();
+        return data.insertedId;
     }
 
     // Update item
-    function updateItem(id, updatedItem) {
-        return database.ref('items/' + id).update(updatedItem);
+    async function updateItem(id, updatedItem) {
+        const response = await fetch(`${DATA_API_URL}/updateOne`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': API_KEY
+            },
+            body: JSON.stringify({
+                dataSource: 'Cluster0',
+                database: 'shop',
+                collection: 'items',
+                filter: { _id: { $oid: id } },
+                update: { $set: updatedItem }
+            })
+        });
+        const data = await response.json();
+        return data.modifiedCount;
     }
 
     // Delete item
-    function deleteItem(id) {
-        return database.ref('items/' + id).remove();
+    async function deleteItem(id) {
+        const response = await fetch(`${DATA_API_URL}/deleteOne`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': API_KEY
+            },
+            body: JSON.stringify({
+                dataSource: 'Cluster0',
+                database: 'shop',
+                collection: 'items',
+                filter: { _id: { $oid: id } }
+            })
+        });
+        const data = await response.json();
+        return data.deletedCount;
     }
 
     // Toggle admin panel
@@ -99,26 +139,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Add item form submission
-    addItemForm.addEventListener('submit', (e) => {
+    addItemForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newItem = {
             name: addItemForm.itemName.value,
             price: parseFloat(addItemForm.itemPrice.value),
             image: addItemForm.itemImage.value
         };
-        addItem(newItem).then(() => {
-            addItemForm.reset();
-        });
+        await addItem(newItem);
+        addItemForm.reset();
+        loadItems();
     });
 
     // Event delegation for item actions
-    itemsContainer.addEventListener('click', (e) => {
+    itemsContainer.addEventListener('click', async (e) => {
         if (e.target.classList.contains('add-to-cart')) {
             const id = e.target.getAttribute('data-id');
-            database.ref('items/' + id).once('value').then((snapshot) => {
-                const item = snapshot.val();
-                addToCart({ id, ...item });
+            const response = await fetch(`${DATA_API_URL}/findOne`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'api-key': API_KEY
+                },
+                body: JSON.stringify({
+                    dataSource: 'Cluster0',
+                    database: 'shop',
+                    collection: 'items',
+                    filter: { _id: { $oid: id } }
+                })
             });
+            const data = await response.json();
+            addToCart(data.document);
         } else if (e.target.classList.contains('edit-item')) {
             const id = e.target.getAttribute('data-id');
             // Implement edit functionality here
@@ -126,7 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (e.target.classList.contains('delete-item')) {
             const id = e.target.getAttribute('data-id');
             if (confirm('Are you sure you want to delete this item?')) {
-                deleteItem(id);
+                await deleteItem(id);
+                loadItems();
             }
         }
     });
